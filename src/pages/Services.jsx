@@ -9,6 +9,12 @@ export default function Services() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 text-white services-page">
+      <section className="service-image-row">
+        {serviceImages.map((src, index) => (
+          <img key={`${src}-${index}`} src={src} alt="Auto shop" />
+        ))}
+      </section>
+
       <header className="mb-10">
         <h1 className="text-4xl font-bold mb-3">Auto Repair Services</h1>
         <p className="text-blue-100">
@@ -54,12 +60,6 @@ export default function Services() {
             Air conditioning repair, recharge, and system inspections.
           </p>
         </div>
-      </section>
-
-      <section className="service-image-row">
-        {serviceImages.map((src, index) => (
-          <img key={`${src}-${index}`} src={src} alt="Auto shop" />
-        ))}
       </section>
 
       <section className="mt-10 bg-white/10 border border-white/10 rounded-xl p-6">
