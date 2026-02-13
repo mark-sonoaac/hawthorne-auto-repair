@@ -7,15 +7,16 @@ export default function Home() {
     () => autoShopImages.filter((name) => name.includes('autoshops')).map(getImageUrl),
     []
   )
+  const homeImages = useMemo(() => images.slice(0, 3), [images])
 
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
     const id = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length)
+      setCurrentIndex((prev) => (prev + 1) % homeImages.length)
     }, 6000)
     return () => clearInterval(id)
-  }, [images.length])
+  }, [homeImages.length])
 
   const scrollToSection = (sectionId) => {
     const el = document.getElementById(sectionId)
@@ -43,7 +44,7 @@ export default function Home() {
         <div className="img-container block">
           <div className="slider-container">
             <div className="slider" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
-              {images.map((imageUrl, index) => (
+              {homeImages.map((imageUrl, index) => (
                 <div className="slide" key={`${imageUrl}-${index}`}>
                   <img src={imageUrl} alt="Featured car" className="image" />
                 </div>
@@ -51,7 +52,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mobile-gallery">
-            {images.map((imageUrl, index) => (
+            {homeImages.map((imageUrl, index) => (
               <img key={`${imageUrl}-${index}`} src={imageUrl} alt="Auto shop" />
             ))}
           </div>

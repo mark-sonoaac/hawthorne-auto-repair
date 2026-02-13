@@ -1,4 +1,12 @@
+import { useMemo } from 'react'
+import { autoShopImages, getImageUrl } from '../data/carInventory'
+
 export default function Services() {
+  const serviceImages = useMemo(
+    () => autoShopImages.filter((name) => name.includes('autoshops')).slice(3, 5).map(getImageUrl),
+    []
+  )
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 text-white services-page">
       <header className="mb-10">
@@ -46,6 +54,12 @@ export default function Services() {
             Air conditioning repair, recharge, and system inspections.
           </p>
         </div>
+      </section>
+
+      <section className="service-image-row">
+        {serviceImages.map((src, index) => (
+          <img key={`${src}-${index}`} src={src} alt="Auto shop" />
+        ))}
       </section>
 
       <section className="mt-10 bg-white/10 border border-white/10 rounded-xl p-6">

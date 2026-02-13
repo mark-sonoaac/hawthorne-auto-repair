@@ -272,6 +272,19 @@ html {
   object-fit: cover;
 }
 
+.service-image-row {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.service-image-row img {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
 .car-slider-container {
   position: relative;
   overflow: hidden;
@@ -732,6 +745,7 @@ html {
   }
   .mobile-gallery {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .text-section h1 {
@@ -834,5 +848,13 @@ html {
 
   .car-slide .details h2 {
     font-size: 2rem;
+  }
+
+  .mobile-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .service-image-row {
+    grid-template-columns: 1fr;
   }
 }
