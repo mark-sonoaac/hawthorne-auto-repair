@@ -25,9 +25,14 @@ export default function Home() {
     }
   }
 
+  const heroBackground = homeImages[0] || ''
+
   return (
     <div id="home">
-      <section className="main-section">
+      <section
+        className="main-section hero-section"
+        style={heroBackground ? { '--hero-bg': `url(${heroBackground})` } : undefined}
+      >
         <div className="text-section block">
           <h1>Alf&apos;s Auto Mechanic &amp; Sales</h1>
           <h3>Quality vehicles and trusted service, start today</h3>
