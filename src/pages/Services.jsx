@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { autoShopImages, getImageUrl } from '../data/carInventory'
 
 export default function Services() {
@@ -6,16 +6,23 @@ export default function Services() {
     () => autoShopImages.filter((name) => name.includes('autoshops')).slice(3, 5).map(getImageUrl),
     []
   )
+  const [heroIndex, setHeroIndex] = useState(0)
+  const heroBackground = serviceImages[heroIndex] || ''
+
+  useEffect(() => {
+    if (serviceImages.length < 2) return undefined
+    const id = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % serviceImages.length)
+    }, 50000)
+    return () => clearInterval(id)
+  }, [serviceImages.length])
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 text-white services-page">
-      <section className="service-image-row">
-        {serviceImages.map((src, index) => (
-          <img key={`${src}-${index}`} src={src} alt="Auto shop" />
-        ))}
-      </section>
-
-      <header className="mb-10">
+    <div
+      className="max-w-6xl mx-auto px-4 py-12 text-white services-page services-hero"
+      style={heroBackground ? { '--hero-bg': `url(${heroBackground})` } : undefined}
+    >
+      <header className="mb-10 services-hero-header">
         <h1 className="text-4xl font-bold mb-3">Auto Repair Services</h1>
         <p className="text-blue-100">
           Professional diagnostics and repair for cars and trucks. Transparent pricing and

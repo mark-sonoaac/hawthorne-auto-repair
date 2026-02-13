@@ -290,18 +290,6 @@ html {
   object-fit: cover;
 }
 
-.service-image-row {
-  margin-top: 24px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.service-image-row img {
-  width: 100%;
-  border-radius: 16px;
-  object-fit: cover;
-}
 
 .car-slider-container {
   position: relative;
@@ -620,6 +608,29 @@ html {
   padding-top: 140px;
 }
 
+.services-hero {
+  position: relative;
+  background-image: var(--hero-bg);
+  background-size: cover;
+  background-position: center;
+}
+
+.services-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.services-hero-header {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
 .primary-link,
 .secondary-link {
   display: inline-block;
@@ -771,6 +782,14 @@ html {
     padding: 80px 0;
   }
   .hero-section::before {
+    opacity: 1;
+  }
+  .services-hero {
+    background-image: var(--hero-bg);
+    background-size: cover;
+    background-position: center;
+  }
+  .services-hero::before {
     opacity: 1;
   }
   .text-section {
