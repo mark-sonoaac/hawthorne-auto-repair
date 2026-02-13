@@ -1,53 +1,78 @@
-import { Link } from 'react-router-dom'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export default function Navigation() {
-  const [open, setOpen] = useState(false)
-  const timeoutRef = useRef(null)
+  const [openNav, setOpenNav] = useState(false)
+  const [openSearch, setOpenSearch] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const handleEnter = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
+  const navItems = [
+    { label: 'Home', sectionId: 'home' },
+    { label: 'Services', sectionId: 'services', route: '/services' },
+    { label: 'Inventory', sectionId: 'products' },
+    { label: 'Contact Us', sectionId: 'contact' }
+  ]
+
+  const scrollToSection = (sectionId) => {
+    const el = document.getElementById(sectionId)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-    setOpen(true)
   }
 
-  const handleLeave = () => {
-    timeoutRef.current = setTimeout(() => setOpen(false), 350)
+  const handleNavClick = (sectionId, route) => (e) => {
+    e.preventDefault()
+    setOpenNav(false)
+    setOpenSearch(false)
+    if (route) {
+      navigate(route)
+      return
+    }
+    if (location.pathname !== '/') {
+      navigate('/')
+      setTimeout(() => scrollToSection(sectionId), 50)
+      return
+    }
+    scrollToSection(sectionId)
+  }
+
+  const handleSearchToggle = () => {
+    setOpenSearch((prev) => {
+      const next = !prev
+      if (next) setOpenNav(false)
+      return next
+    })
   }
 
   return (
-    <nav className="bg-slate-900 text-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-start gap-12 py-6 items-center">
-          <Link to="/" className="hover:text-blue-400 transition font-semibold">
-            Home
-          </Link>
-
-          {/* Services dropdown with small hide delay */}
-          <div className="relative" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
-            <button
-              onClick={() => setOpen((s) => !s)}
-              className="flex items-center gap-2 hover:text-blue-400 transition font-semibold bg-transparent"
-            >
-              Services
-              <svg className="w-4 h-4 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-
-            <div className={`${open ? 'block' : 'hidden'} absolute left-0 mt-2 w-44 bg-white text-black rounded shadow-lg z-50`}>
-              <Link to="/book-repair" className="block px-4 py-2 hover:bg-slate-100">Book Repair</Link>
-              <Link to="/my-repairs" className="block px-4 py-2 hover:bg-slate-100">My Repairs</Link>
-              <Link to="/cars-for-sale" className="block px-4 py-2 hover:bg-slate-100">Cars for Sale</Link>
-            </div>
-          </div>
-
-          <a href="#" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event('openContactModal')) }} className="hover:text-blue-400 transition font-semibold cursor-pointer">
-            Contact
-          </a>
-        </div>
+    <nav className={`nav ${openSearch ? 'openSearch' : ''} ${openNav ? 'openNav' : ''}`}>
+      <i className="uil uil-bars navOpenBtn" onClick={() => { setOpenNav(true); setOpenSearch(false) }}></i>
+      <a href="/" className="logo" onClick={handleNavClick('home')}>Alf&apos;s Auto Mechanic &amp; Sales</a>
+      <ul className="nav-links">
+        <i className="uil uil-times navCloseBtn" onClick={() => setOpenNav(false)}></i>
+        {navItems.map((item) => (
+          <li key={item.sectionId}>
+            <a href={item.route || `#${item.sectionId}`} onClick={handleNavClick(item.sectionId, item.route)}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <i
+        className={`uil ${openSearch ? 'uil-times' : 'uil-search'} search-icon`}
+        id="searchIcon"
+        onClick={handleSearchToggle}
+      ></i>
+      <div className="search-box">
+        <i className="uil uil-search search-icon"></i>
+        <input
+          type="text"
+          placeholder="Search here..."
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
       </div>
     </nav>
   )

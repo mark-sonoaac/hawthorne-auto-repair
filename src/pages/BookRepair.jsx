@@ -45,7 +45,7 @@ export default function BookRepair() {
     <div className="w-full px-6 py-12">
       {/* Banner Image */}
       <div className="mb-8 rounded-lg overflow-hidden shadow-lg">
-        <img src="./images/repair-vehicle.jpg" alt="Vehicle Repair" className="w-full h-64 object-cover" />
+        <img src="/images/auto-shops/repair-vehicle.jpg" alt="Vehicle Repair" className="w-full h-64 object-cover" />
       </div>
 
       <div className="max-w-7xl mx-auto">
@@ -167,7 +167,7 @@ export default function BookRepair() {
         <aside className="lg:w-1/3">
           <div className="bg-blue-50 border-l-4 border-blue-400 p-6 rounded">
             <h3 className="font-bold text-gray-800 mb-2">Quick Info</h3>
-            <p className="text-gray-700 mb-4">Need a quick quote? Call us at (555) 123-4567.</p>
+            <p className="text-gray-700 mb-4">Need a quick quote? Call us at +1 (973) 981-3578.</p>
             <h4 className="font-semibold mb-2">Services We Offer</h4>
             <ul className="list-disc pl-5 text-gray-700 space-y-1">
               <li>Oil Changes & Fluid Service</li>

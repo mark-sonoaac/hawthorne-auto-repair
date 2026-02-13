@@ -39,15 +39,15 @@ export default function ContactModal({ open, onClose }) {
           </div>
 
           <div className="bg-gray-50 rounded-lg p-6">
-            <h4 className="text-lg font-bold mb-3">Hawthorne Auto Repair</h4>
+            <h4 className="text-lg font-bold mb-3">Alf&apos;s Auto Mechanic &amp; Sales LLC</h4>
             <p className="text-gray-700 mb-2">556 Hawthorne Ave</p>
             <p className="text-gray-700 mb-2">Newark, NJ 07112</p>
-            <p className="text-gray-700 font-semibold mb-2">📞 973-375-2147</p>
-            <p className="text-gray-700 mb-4">📧 info@hawthorneauto.com</p>
+            <p className="text-gray-700 font-semibold mb-2">📞 +1 (973) 981-3578</p>
+            <p className="text-gray-700 mb-4">📧 alfsautomechanic@gmail.com</p>
 
             <h5 className="font-semibold mb-2">Hours</h5>
-            <p className="text-gray-600">Mon-Fri: 8:00 AM - 6:00 PM</p>
-            <p className="text-gray-600">Sat: 9:00 AM - 4:00 PM</p>
+            <p className="text-gray-600">Monday to Friday: 8:00 AM to 6:00 PM</p>
+            <p className="text-gray-600">Saturday: 9:00 AM to 4:00 PM</p>
 
             
           </div>

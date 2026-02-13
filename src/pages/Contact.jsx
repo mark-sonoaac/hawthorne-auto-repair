@@ -42,15 +42,36 @@ export default function Contact() {
             {/* Phone */}
             <div>
               <h3 className="font-bold text-lg mb-2 text-gray-800">📞 Phone</h3>
-              <p className="text-gray-600 text-lg">9733752147</p>
-              <p className="text-gray-500 text-sm">Available Mon-Fri: 8AM - 6PM, Sat: 9AM - 4PM</p>
+              <p className="text-gray-600 text-lg">+1 (973) 981-3578</p>
+              <p className="text-gray-500 text-sm">Available Monday to Friday: 8AM to 6PM, Saturday: 9AM to 4PM</p>
             </div>
 
             {/* Email */}
             <div>
               <h3 className="font-bold text-lg mb-2 text-gray-800">📧 Email</h3>
-              <p className="text-gray-600 text-lg">info@hawthorneauto.com</p>
+              <p className="text-gray-600 text-lg">alfsautomechanic@gmail.com</p>
               <p className="text-gray-500 text-sm">We respond within 24 hours</p>
+            </div>
+
+            {/* Social */}
+            <div>
+              <h3 className="font-bold text-lg mb-2 text-gray-800">📱 Social</h3>
+              <a
+                className="text-gray-600 text-lg block hover:text-blue-600"
+                href="https://www.instagram.com/alfsautomechanic"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Instagram: @alfsautomechanic
+              </a>
+              <a
+                className="text-gray-600 text-lg block hover:text-blue-600"
+                href="https://www.tiktok.com/@alfs.auto.mechani?_r=1&_t=ZP-93rmvbEZOQAs"
+                target="_blank"
+                rel="noreferrer"
+              >
+                TikTok: @alfs.auto.mechani
+              </a>
             </div>
 
             {/* Location */}
@@ -58,15 +79,15 @@ export default function Contact() {
               <h3 className="font-bold text-lg mb-2 text-gray-800">📍 Location</h3>
               <p className="text-gray-600">556 Hawthorne Ave</p>
               <p className="text-gray-600">Newark, NJ 07112</p>
-              <p className="text-gray-500 text-sm mt-2">Located near Hawthorne Deli & Gr</p>
+              <p className="text-gray-500 text-sm mt-2">Located on Hawthorne Ave</p>
             </div>
 
             {/* Hours */}
             <div>
               <h3 className="font-bold text-lg mb-2 text-gray-800">🕒 Hours of Operation</h3>
               <div className="text-gray-600 space-y-1">
-                <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
-                <p>Saturday: 9:00 AM - 4:00 PM</p>
+                <p>Monday to Friday: 8:00 AM to 6:00 PM</p>
+                <p>Saturday: 9:00 AM to 4:00 PM</p>
                 <p>Sunday: Closed</p>
               </div>
             </div>
@@ -75,10 +96,10 @@ export default function Contact() {
             <div>
               <h3 className="font-bold text-lg mb-2 text-gray-800">🔧 Quick Services</h3>
               <ul className="text-gray-600 space-y-1">
-                <li>✓ Oil changes - $30-$60</li>
-                <li>✓ Tire rotations - $40</li>
-                <li>✓ Diagnostics - $85</li>
-                <li>✓ Brake pads - starting $120</li>
+                <li>✓ Oil changes $30 to $60</li>
+                <li>✓ Tire rotations $40</li>
+                <li>✓ Diagnostics $85</li>
+                <li>✓ Brake pads starting $120</li>
               </ul>
             </div>
           </div>

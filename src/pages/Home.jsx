@@ -1,120 +1,166 @@
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { autoShopImages, getImageUrl } from '../data/carInventory'
 
 export default function Home() {
+  const images = useMemo(
+    () => autoShopImages.filter((name) => name.includes('autoshops')).map(getImageUrl),
+    []
+  )
+
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length)
+    }, 6000)
+    return () => clearInterval(id)
+  }, [images.length])
+
+  const scrollToSection = (sectionId) => {
+    const el = document.getElementById(sectionId)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-black to-blue-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-5xl font-bold mb-4">Welcome to Hawthorne Auto Repair</h2>
-          <p className="text-xl text-gray-300 mb-8">Expert repairs and quality vehicles since 2025</p>
-          <div className="flex gap-4 justify-center">
-            <Link to="/book-repair" className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-8 py-3 rounded-lg transition">
-              Book Repair
-            </Link>
-            <Link to="/cars-for-sale" className="bg-slate-700 hover:bg-slate-600 text-white font-bold px-8 py-3 rounded-lg transition">
-              Browse Cars
-            </Link>
+    <div id="home">
+      <section className="main-section">
+        <div className="text-section block">
+          <h1>Alf&apos;s Auto Mechanic &amp; Sales</h1>
+          <h3>Quality vehicles and trusted service, start today</h3>
+          <p>
+            Browse clean, inspected vehicles with transparent pricing and easy financing
+            options. We help you drive home with confidence.
+          </p>
+          <Link to="/cars-for-sale">Browse cars</Link>
+          <div className="slot-buttons">
+            <button type="button" onClick={() => scrollToSection('products')}>Explore</button>
+            <button type="button" onClick={() => scrollToSection('services')}>Let&apos;s Drive</button>
+          </div>
+        </div>
+        <div className="img-container block">
+          <div className="slider-container">
+            <div className="slider" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+              {images.map((imageUrl, index) => (
+                <div className="slide" key={`${imageUrl}-${index}`}>
+                  <img src={imageUrl} alt="Featured car" className="image" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mobile-gallery">
+            {images.map((imageUrl, index) => (
+              <img key={`${imageUrl}-${index}`} src={imageUrl} alt="Auto shop" />
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Quick Actions */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <h3 className="text-5xl font-bold mb-12 text-gray-800">What Can We Help You With?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Repair Card (background image) */}
-          <div className="relative rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition transform hover:scale-105">
-            <div
-              className="h-72 bg-cover bg-center"
-              style={{ backgroundImage: "url('./images/auto-repair.jpg')" }}
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-8">
-              <h4 className="text-4xl font-bold mb-3 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.6)' }}>Vehicle Repair</h4>
-              <p className="text-base text-gray-100 mb-6" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>Professional repairs for all makes and models. From routine maintenance to major repairs.</p>
-              <Link to="/book-repair" className="inline-block bg-blue-500 text-white font-bold px-6 py-3 rounded text-lg hover:bg-blue-600">
-                Book Service →
-              </Link>
+      <section id="services" className="page-section">
+        <div className="section-content align-left">
+          <h2 className="section-title">Services</h2>
+          <p className="section-subtitle">Everything you need to buy with confidence.</p>
+          <div className="section-grid">
+            <div className="section-card">
+              <h4>Pre Purchase Inspections</h4>
+              <p>Full mechanical checks so you know exactly what you&apos;re buying.</p>
             </div>
-          </div>
-
-          {/* Track Card (background image) */}
-          <div className="relative rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition transform hover:scale-105">
-            <div
-              className="h-72 bg-cover bg-center bg-gradient-to-br from-blue-600 to-blue-800"
-              style={{ backgroundImage: "url('./images/track-repairs.avif'), linear-gradient(to bottom right, rgb(37, 99, 235), rgb(30, 58, 138))" }}
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-8">
-              <h4 className="text-4xl font-bold mb-3 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.6)' }}>Track Your Repairs</h4>
-              <p className="text-base text-gray-100 mb-6" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>Monitor your repair progress in real-time. Get updates on labor, parts, and completion.</p>
-              <Link to="/my-repairs" className="inline-block bg-blue-500 text-white font-bold px-6 py-3 rounded text-lg hover:bg-blue-600">
-                View Status →
-              </Link>
+            <div className="section-card">
+              <h4>Financing Options</h4>
+              <p>Flexible monthly plans tailored to your budget.</p>
             </div>
-          </div>
-
-          {/* Sales Card (background image) */}
-          <div className="relative rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition transform hover:scale-105">
-            <div
-              className="h-72 bg-cover bg-center"
-              style={{ backgroundImage: "url('./images/cars-for-sale.webp')" }}
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-8">
-              <h4 className="text-4xl font-bold mb-3 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.6)' }}>Cars for Sale</h4>
-              <p className="text-base text-gray-100 mb-6" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>Browse our inventory of quality used vehicles with transparent pricing and vehicle history.</p>
-              <Link to="/cars-for-sale" className="inline-block bg-blue-500 text-white font-bold px-6 py-3 rounded text-lg hover:bg-blue-600">
-                View Inventory →
-              </Link>
+            <div className="section-card">
+              <h4>Trade In Support</h4>
+              <p>Get a fair offer for your current vehicle.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="bg-gray-100 py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <h3 className="text-3xl font-bold mb-8 text-gray-800">Our Services</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h4 className="font-bold text-lg mb-2">✓ Oil Changes & Fluid Service</h4>
-              <p className="text-gray-600">Keep your engine running smoothly with regular maintenance</p>
+      <section id="products" className="page-section alt">
+        <div className="section-content">
+          <h2 className="section-title">Inventory</h2>
+          <p className="section-subtitle">Cars and SUVs ready for immediate purchase.</p>
+          <div className="section-grid">
+            <div className="section-card">
+              <h4>City Cars</h4>
+              <p>Fuel efficient vehicles that make daily driving easy.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h4 className="font-bold text-lg mb-2">✓ Brake Service</h4>
-              <p className="text-gray-600">Safety firstprofessional brake inspection and repair</p>
+            <div className="section-card">
+              <h4>Family SUVs</h4>
+              <p>Roomy, safe, and packed with comfort features.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h4 className="font-bold text-lg mb-2">✓ Diagnostics</h4>
-              <p className="text-gray-600">Advanced computer diagnostics for any issue</p>
+            <div className="section-card">
+              <h4>Pickup Trucks</h4>
+              <p>Work ready trucks for jobs, hauling, and towing.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h4 className="font-bold text-lg mb-2">✓ Tire Service</h4>
-              <p className="text-gray-600">New tires, alignments, rotations, and repairs</p>
+          </div>
+          <div className="section-actions">
+            <Link to="/cars-for-sale" className="primary-link">View cars</Link>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="page-section">
+        <div className="section-content">
+          <h2 className="section-title">About Us</h2>
+          <p className="section-subtitle">
+            We are a local auto shop and sales team focused on dependable cars, honest
+            pricing, and long term support.
+          </p>
+          <div className="section-grid">
+            <div className="section-card">
+              <h4>Trusted Inventory</h4>
+              <p>Every car is inspected with transparent history and pricing.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h4 className="font-bold text-lg mb-2">✓ Transmission Repair</h4>
-              <p className="text-gray-600">Complex transmission work with expert technicians</p>
+            <div className="section-card">
+              <h4>Easy Financing</h4>
+              <p>Apply and get options quickly with clear terms.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h4 className="font-bold text-lg mb-2">✓ Air Conditioning</h4>
-              <p className="text-gray-600">AC repair, recharge, and seasonal maintenance</p>
+            <div className="section-card">
+              <h4>Local Support</h4>
+              <p>Friendly staff ready to help by phone or in person.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold mb-4">Ready to Get Your Car Fixed?</h3>
-          <p className="mb-8 text-lg">Schedule an appointment today or call us for a quick quote</p>
-          <div className="flex gap-4 justify-center">
-            <Link to="/book-repair" className="bg-black text-white font-bold px-8 py-3 rounded-lg hover:bg-gray-900 transition">
-              Book Now
-            </Link>
-            <button onClick={() => window.dispatchEvent(new Event('openContactModal'))} className="bg-white text-blue-600 font-bold px-8 py-3 rounded-lg hover:bg-gray-100 transition">
-              Contact Us
-            </button>
+      <section id="contact" className="page-section alt">
+        <div className="section-content">
+          <h2 className="section-title">Contact Us</h2>
+          <p className="section-subtitle">
+            Have questions? Reach out and we&apos;ll help you get moving.
+          </p>
+          <div className="contact-outline">
+            <div className="contact-row">
+              <span className="contact-label">Phone</span>
+              <span className="contact-value">+1 (973) 981-3578</span>
+            </div>
+            <div className="contact-row">
+              <span className="contact-label">Email</span>
+              <span className="contact-value">alfsautomechanic@gmail.com</span>
+            </div>
+            <div className="contact-row">
+              <span className="contact-label">Location</span>
+              <span className="contact-value">556 Hawthorne Ave, Newark, NJ 07112</span>
+            </div>
+            <div className="contact-row">
+              <span className="contact-label">Instagram</span>
+              <a className="contact-link" href="https://www.instagram.com/alfsautomechanic" target="_blank" rel="noreferrer">
+                @alfsautomechanic
+              </a>
+            </div>
+            <div className="contact-row">
+              <span className="contact-label">TikTok</span>
+              <a className="contact-link" href="https://www.tiktok.com/@alfs.auto.mechani?_r=1&_t=ZP-93rmvbEZOQAs" target="_blank" rel="noreferrer">
+                @alfs.auto.mechani
+              </a>
+            </div>
+          </div>
+          <div className="section-actions">
+            <Link to="/cars-for-sale" className="secondary-link">View cars</Link>
           </div>
         </div>
       </section>

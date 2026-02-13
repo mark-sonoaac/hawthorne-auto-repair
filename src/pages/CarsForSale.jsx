@@ -1,105 +1,239 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { carInventory, getImageUrl } from '../data/carInventory'
 
 export default function CarsForSale() {
-  const [cars] = useState([
-    {
-      id: 1,
-      year: 2018,
-      make: 'Honda',
-      model: 'Civic',
-      price: 14995,
-      mileage: 45000,
-      transmission: 'Automatic',
-      fuel: 'Gasoline',
-      image: '🚗'
-    },
-    {
-      id: 2,
-      year: 2019,
-      make: 'Toyota',
-      model: 'Camry',
-      price: 18995,
-      mileage: 38000,
-      transmission: 'Automatic',
-      fuel: 'Gasoline',
-      image: '🚗'
-    },
-    {
-      id: 3,
-      year: 2017,
-      make: 'Ford',
-      model: 'F-150',
-      price: 22995,
-      mileage: 62000,
-      transmission: 'Automatic',
-      fuel: 'Gasoline',
-      image: '🚙'
-    },
-    {
-      id: 4,
-      year: 2020,
-      make: 'Mazda',
-      model: '3',
-      price: 16995,
-      mileage: 28000,
-      transmission: 'Automatic',
-      fuel: 'Gasoline',
-      image: '🚗'
-    }
-  ])
+  const [cars] = useState(carInventory)
 
   const [selectedCar, setSelectedCar] = useState(null)
   const [showInquiry, setShowInquiry] = useState(false)
+  const [filters, setFilters] = useState({
+    make: '',
+    model: '',
+    price: '',
+    mileage: ''
+  })
+  const [sliderIndex, setSliderIndex] = useState(0)
+  const sliderRef = useRef(null)
+  const intervalRef = useRef(null)
+
+  const sliderThemes = useMemo(() => ([
+    { dark: '#500033', light: '#FF0077' },
+    { dark: '#000050', light: '#0033FF' },
+    { dark: '#00501D', light: '#00FF44' },
+    { dark: '#554D00', light: '#FF4E00' },
+    { dark: '#300050', light: '#8000FF' }
+  ]), [])
+
+  const sliderCars = useMemo(() => {
+    const base = cars.slice(0, 5)
+    return base.map((car, index) => ({
+      ...car,
+      theme: sliderThemes[index % sliderThemes.length]
+    }))
+  }, [cars, sliderThemes])
+
+  const inRange = (value, range) => {
+    if (!range) return true
+    if (range.endsWith('+')) {
+      const min = Number(range.replace('+', ''))
+      return value >= min
+    }
+    const [min, max] = range.split('-').map(Number)
+    return value >= min && value <= max
+  }
+
+  const filteredCars = cars.filter((car) => {
+    const makeMatch = filters.make ? car.make === filters.make : true
+    const modelMatch = filters.model ? car.model === filters.model : true
+    const priceMatch = inRange(car.price, filters.price)
+    const mileageMatch = inRange(car.mileage, filters.mileage)
+    return makeMatch && modelMatch && priceMatch && mileageMatch
+  })
+
+  const availableMakes = Array.from(new Set(cars.map((car) => car.make))).sort()
+  const availableModels = Array.from(
+    new Set(
+      cars
+        .filter((car) => (filters.make ? car.make === filters.make : true))
+        .map((car) => car.model)
+    )
+  ).sort()
+
+  const goToSlide = (nextIndex) => {
+    const safeIndex = (nextIndex + sliderCars.length) % sliderCars.length
+    setSliderIndex(safeIndex)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
+    intervalRef.current = setInterval(() => {
+      setSliderIndex((prev) => (prev + 1) % sliderCars.length)
+    }, 6000)
+  }
+
+  useEffect(() => {
+    if (!sliderCars.length) return undefined
+    intervalRef.current = setInterval(() => {
+      setSliderIndex((prev) => (prev + 1) % sliderCars.length)
+    }, 6000)
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [sliderCars.length])
+
+  useEffect(() => {
+    const sliderEl = sliderRef.current
+    if (!sliderEl) return
+    const activeSlide = sliderEl.querySelector('.car-slide.active')
+    if (!activeSlide) return
+    const tl = gsap.timeline({ defaults: { duration: 0.6, ease: 'power2.inOut' } })
+    tl.from(activeSlide.querySelector('.bg'), { x: '-100%', opacity: 0 })
+      .from(activeSlide.querySelectorAll('.details h2, .details p'), { opacity: 0, y: 20, stagger: 0.08 }, '-=0.3')
+      .from(activeSlide.querySelector('.details button'), { opacity: 0, y: -20 }, '-=0.3')
+      .from(activeSlide.querySelector('.illustration .inner'), { opacity: 0, x: 40 }, '-=0.4')
+  }, [sliderIndex])
+
+  const handleScrollToGrid = () => {
+    const grid = document.getElementById('cars-grid')
+    if (grid) {
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-8 text-gray-800">Cars for Sale</h1>
 
+      {sliderCars.length > 0 && (
+        <section className="car-slider-container">
+          <div
+            className="car-slider"
+            ref={sliderRef}
+            style={{ transform: `translateX(-${sliderIndex * 100}%)` }}
+          >
+            {sliderCars.map((car, index) => (
+              <div
+                key={`${car.id}-${index}`}
+                className={`car-slide ${index === sliderIndex ? 'active' : ''}`}
+                style={{ backgroundColor: car.theme.dark }}
+              >
+                <div className="bg"></div>
+                <div className="details">
+                  <h2>{car.year} {car.make} {car.model}</h2>
+                  <p>
+                    ${car.price.toLocaleString()} • {car.mileage.toLocaleString()} miles • {car.transmission}
+                  </p>
+                  <button type="button" onClick={() => { setSelectedCar(car); handleScrollToGrid() }}>
+                    Check Now
+                  </button>
+                </div>
+                <div className="illustration">
+                  <div className="inner" style={{ backgroundColor: car.theme.light }}>
+                    <img src={getImageUrl(car.imageName)} alt={`${car.make} ${car.model}`} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button className="car-slider-nav prev" onClick={() => goToSlide(sliderIndex - 1)} aria-label="Previous">
+            ‹
+          </button>
+          <button className="car-slider-nav next" onClick={() => goToSlide(sliderIndex + 1)} aria-label="Next">
+            ›
+          </button>
+          <div className="car-slider-trail">
+            {sliderCars.map((_, index) => (
+              <button
+                key={`trail-${index}`}
+                className={index === sliderIndex ? 'active' : ''}
+                onClick={() => goToSlide(index)}
+                type="button"
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow mb-8">
-        <h3 className="text-lg font-bold mb-4">Filters</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <select className="border border-gray-300 rounded-lg px-4 py-2 bg-white">
+      <div className="bg-white p-6 rounded-lg shadow mb-8 text-gray-800">
+        <h3 className="text-lg font-bold mb-4 text-gray-900">Filters</h3>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <select
+            className="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800"
+            value={filters.make}
+            onChange={(e) => setFilters((prev) => ({ ...prev, make: e.target.value, model: '' }))}
+          >
             <option value="">Any Make</option>
-            <option>Honda</option>
-            <option>Toyota</option>
-            <option>Ford</option>
-            <option>Mazda</option>
+            {availableMakes.map((make) => (
+              <option key={make} value={make}>{make}</option>
+            ))}
           </select>
 
-          <select className="border border-gray-300 rounded-lg px-4 py-2 bg-white">
+          <select
+            className="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800"
+            value={filters.model}
+            onChange={(e) => setFilters((prev) => ({ ...prev, model: e.target.value }))}
+          >
             <option value="">Any Model</option>
-            <option>Civic</option>
-            <option>Camry</option>
-            <option>F-150</option>
-            <option>3</option>
+            {availableModels.map((model) => (
+              <option key={model} value={model}>{model}</option>
+            ))}
           </select>
 
-          <select className="border border-gray-300 rounded-lg px-4 py-2 bg-white">
+          <select
+            className="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800"
+            value={filters.price}
+            onChange={(e) => setFilters((prev) => ({ ...prev, price: e.target.value }))}
+          >
             <option value="">Any Price</option>
-            <option value="0-10000">0 - $10,000</option>
-            <option value="10001-20000">$10,001 - $20,000</option>
-            <option value="20001-30000">$20,001 - $30,000</option>
+            <option value="0-5000">$0 to $5,000</option>
+            <option value="5001-10000">$5,001 to $10,000</option>
+            <option value="10001-20000">$10,001 to $20,000</option>
+            <option value="20001-30000">$20,001 to $30,000</option>
             <option value="30000+">$30,000+</option>
           </select>
 
-          <button className="bg-primary hover:bg-gray-800 text-white font-bold py-2 rounded-lg transition">
-            Search
+          <select
+            className="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800"
+            value={filters.mileage}
+            onChange={(e) => setFilters((prev) => ({ ...prev, mileage: e.target.value }))}
+          >
+            <option value="">Any Mileage</option>
+            <option value="0-5000">0 to 5,000 mi</option>
+            <option value="5001-10000">5,001 to 10,000 mi</option>
+            <option value="10001-30000">10,001 to 30,000 mi</option>
+            <option value="30001-60000">30,001 to 60,000 mi</option>
+            <option value="60000+">60,000+ mi</option>
+          </select>
+
+          <button
+            className="bg-primary hover:bg-gray-800 text-white font-bold py-2 rounded-lg transition w-full md:w-auto"
+            onClick={() => setFilters({ make: '', model: '', price: '', mileage: '' })}
+          >
+            Reset
           </button>
         </div>
       </div>
 
       {/* Cars Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {cars.map(car => (
+      <div id="cars-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {filteredCars.map(car => (
           <div
             key={car.id}
             className="bg-white rounded-lg shadow-lg hover:shadow-xl transition cursor-pointer overflow-hidden"
             onClick={() => setSelectedCar(car)}
           >
-            <div className="bg-gray-200 h-48 flex items-center justify-center text-6xl">
-              {car.image}
+            <div className="bg-gray-200 h-48 flex items-center justify-center">
+              <img
+                src={getImageUrl(car.imageName)}
+                alt={`${car.year} ${car.make} ${car.model}`}
+                className="h-full w-full object-cover"
+              />
             </div>
             <div className="p-4">
               <h4 className="text-lg font-bold text-gray-800 mb-2">
